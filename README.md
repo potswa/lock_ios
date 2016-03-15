@@ -38,7 +38,7 @@ The mutex is "recursive," so a function may lock a stream which is already locke
 by a calling function.
 
 Input streams are supported as well.
-(For example, `getline( std::cin >> lock_ios )` is reasonable usage.)
+(For example, `getline( std::cin >> lock_ios() )` is reasonable usage.)
 
 ## Setup
 
