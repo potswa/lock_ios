@@ -76,8 +76,8 @@ it to be reallocated, causing a simultaneous `lock_ios` to crash.
 Unlike most manipulators, `lock_ios` works regardless of the stream's state.
 As with any access, locking is necessary before checking `badbit` or `failbit`.
 
-On libc++, `badbit` will be set if `lock_ios` is attempted when no mutex has been initialized.
-This is merely damage mitigation. A program which observes this is already headed for UB.
+If `lock_ios` is attempted when no mutex has been initialized, a `system_error` is thrown
+as if a `std::unique_lock` was locked without a mutex.
 
 ## Caveats
 
@@ -96,9 +96,6 @@ A named lock object only locks a single stream. Inserting `lock_ios(lock)` to a 
 stream, when `lock` is already locking something, will first unlock `lock`.
 
 Do not destroy a stream while it is locked.
-
-Except on libc++ (Apple's default standard library), this library does not currently handle
-out-of-memory conditions arising within iostreams.
 
 
 Feedback
