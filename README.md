@@ -104,6 +104,6 @@ out-of-memory conditions arising within iostreams.
 Feedback
 ========
 
-Please report issues [on GitHub](/potswa/lock_ios/issues).
+Please report issues [on GitHub](https://github.com/potswa/lock_ios/issues).
 
-For other feedback, my email address may also be found [there](/potswa).
+For other feedback, my email address may also be found [there](https://github.com/potswa).
