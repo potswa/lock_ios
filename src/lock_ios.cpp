@@ -50,6 +50,7 @@ std::ios_base & mutex_init_own( std::ios_base & s ) {
         ptr = new std::recursive_mutex; // Throw std::bad_alloc or std::system_error.
     } catch (...) {
         s.setf( std::ios_base::badbit );
+        throw;
     }
 #else
     ptr = new std::recursive_mutex;
