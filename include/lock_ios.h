@@ -17,11 +17,17 @@ class temporary_lock;
 
 typedef std::unique_lock< std::recursive_mutex > ios_lock;
 
+// Each thread should invoke this before doing anything with the stream.
+std::ios_base & mutex_init( std::ios_base & s );
+
+// If one thread knows that it is first, it may invoke this instead.
+std::ios_base & mutex_init_own( std::ios_base & s );
+
 // I/O manipulator to lock a given stream to a given, scoped object.
-inline impl::manip lock_ios( ios_lock & l );
+impl::manip lock_ios( ios_lock & l );
 
 // I/O manipulator to lock a given stream until the next semicolon.
-inline impl::manip lock_ios( impl::temporary_lock && l /* = {} */ );
+impl::manip lock_ios( impl::temporary_lock && l /* = {} */ );
 
 
 namespace impl {
