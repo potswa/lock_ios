@@ -4,8 +4,6 @@
 
 #include "lock_ios.h"
 
-#include <cassert>
-#include <stdexcept>
 #include <system_error>
 
 namespace s6_lock_ios {
