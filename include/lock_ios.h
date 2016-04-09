@@ -61,7 +61,7 @@ namespace impl {
 
 class manip {
     friend manip s6_lock_ios::lock_ios( ios_lock & );
-    friend manip s6_lock_ios::lock_ios( temporary_lock && );
+    friend manip s6_lock_ios::lock_ios( impl::temporary_lock && );
     
     ios_lock &l;
     
@@ -83,7 +83,7 @@ class manip {
 };
 
 class temporary_lock {
-    friend manip s6_lock_ios::lock_ios( temporary_lock && );
+    friend manip s6_lock_ios::lock_ios( impl::temporary_lock && );
     
     ios_lock l;
     
@@ -95,7 +95,7 @@ class temporary_lock {
 inline impl::manip lock_ios( ios_lock & l )
     { return { l }; }
 
-inline impl::manip lock_ios( impl::temporary_lock && l = {} )
+inline impl::manip lock_ios( impl::temporary_lock && l = impl::temporary_lock{} )
     { return { l.l }; }
 
 }
