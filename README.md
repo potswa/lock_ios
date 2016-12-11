@@ -77,8 +77,8 @@ as if a `std::unique_lock` was locked without a mutex. (`badbit` is not set.)
 This library requires the `ios_base::pword` function to be thread-safe, which is only
 realistic as long as it does not allocate memory. User-defined manipulators, such as this
 library, tend to cause it to allocate memory. To be safe, either avoid other such formatting
-libraries, or ensure that each thread has been suitably exposed to the library before
-concurrent use.
+libraries, or ensure that each stream has been suitably exposed to the library (its `pword`s
+and `iword`s are allocated) before concurrent use.
 
 Note that such libraries using `pword` are inherently unsafe for concurrency. It is not
 an incompatibility with this library, in particular.
