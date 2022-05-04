@@ -44,9 +44,4 @@ void manip::acquire( std::ios_base & s ) const {
 }
 }
 }
-int main() {
-	int res = s6_lock_ios::impl::ios_index();
-	auto n = [](int &x) { x = x ? true : false;};
-	n(res);
-	return 0;
-}
+
