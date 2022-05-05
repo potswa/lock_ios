@@ -38,7 +38,7 @@ The mutex is "recursive," so a function may lock a stream which is already locke
 by a calling function.
 
 Input streams are supported as well.
-(For example, `getline( std::cin >> lock_ios )` is reasonable usage.)
+(For example, `getline( std::cin >> lock_ios() )` is reasonable usage.)
 
 ## Setup
 
@@ -51,33 +51,37 @@ the stream. This is achieved by a critical section.
 `mutex_init_own` may be called by a thread before it starts sharing a stream with others.
 Typically it is lock-free.
 
+Some streams, such as `std::cerr` and `std::cin`, flush other streams via `std::ios::tie()`.
+These setup routines clear `tie` associations.
+
+Unlike most manipulators, these require that the stream is in a good state (per `!s.bad()`).
+Upon failure, they set `badbit` and throw `std::ios_base::failure` (even if the stream has
+not set `exceptions`).
+
 These setup routines do not lock anything. `lock_ios` must be called subsequently to do so.
-
-Unlike most manipulators, these require that the stream is in a good state (`s.good()`
-or `(bool) s`). Under libc++, this is enforced by an `assert`.
-
-Upon failure, these manipulators throw. On libc++, they also set `badbit`.
-Possible exceptions include `std::bad_alloc`, `std::system_error`,
-and (when `badbit` is set in `exceptions()`) `std::ios_base::failure`.
-
-Due to a standard library limitation, on platforms besides libc++, no exception may occur
-when `ios_base` runs out of memory. The stream is still left in a `badbit` state,
-if you are concerned with this condition.
-(`badbit` will still cause an exception if `exceptions` is set appropriately.
-Otherwise, the mutex and its allocation block will leak.)
 
 ## I/O
 
 Always lock a shared stream before any access. It's not just that output from racing
 insertions appears mixed or interleaved. Any concurrent accesses incur data races, which
-carry undefined behavior. An unsynchronized access to the `ios_base::pword` array may cause
-it to be reallocated, causing a simultaneous `lock_ios` to crash.
+(aside from the four standard streams under `sync_with_stdio`) carry undefined behavior.
 
 Unlike most manipulators, `lock_ios` works regardless of the stream's state.
 As with any access, locking is necessary before checking `badbit` or `failbit`.
 
-On libc++, `badbit` will be set if `lock_ios` is attempted when no mutex has been initialized.
-This is merely damage mitigation. A program which observes this is already headed for UB.
+If `lock_ios` is attempted when no mutex has been initialized, a `system_error` is thrown
+as if a `std::unique_lock` was locked without a mutex. (`badbit` is not set.)
+
+## Limitations
+
+This library requires the `ios_base::pword` function to be thread-safe, which is only
+realistic as long as it does not allocate memory. User-defined manipulators, such as this
+library, tend to cause it to allocate memory. To be safe, either avoid other such formatting
+libraries, or ensure that each stream has been suitably exposed to the library (its `pword`s
+and `iword`s are allocated) before concurrent use.
+
+Note that such libraries using `pword` are inherently unsafe for concurrency. It is not
+an incompatibility with this library, in particular.
 
 ## Caveats
 
@@ -96,9 +100,6 @@ A named lock object only locks a single stream. Inserting `lock_ios(lock)` to a 
 stream, when `lock` is already locking something, will first unlock `lock`.
 
 Do not destroy a stream while it is locked.
-
-Except on libc++ (Apple's default standard library), this library does not currently handle
-out-of-memory conditions arising within iostreams.
 
 
 Feedback

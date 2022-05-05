@@ -3,7 +3,6 @@
 // This source is released under the MIT license, http://opensource.org/licenses/MIT
 // Minimal implementation 
 
-#include "include/lock_ios.h"
 #include <system_error>
 
 namespace s6_lock_ios {
@@ -28,11 +27,6 @@ void init( std::ios_base & s ) {
             ptr = nullptr; // Do not copy mutex access.
             // Note, copyfmt does not copy rdbuf or otherwise promote races.
         }
-    };
-    s.register_callback((std::ios_base::event_callback)&lambda, 0 );
-    
-    ptr = new std::recursive_mutex; // Throw std::bad_alloc or std::system_error.
-} 
 void manip::acquire( std::ios_base & s ) const {
     /*  Accessing pword here assumes that the implementation modifies nothing while
         retrieving a preexisting entry. */
