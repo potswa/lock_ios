@@ -1,6 +1,7 @@
 // lock_ios.cpp - Per-stream synchronization.
 // Copyright 2016 by David Krauss.
 // This source is released under the MIT license, http://opensource.org/licenses/MIT
+// Minimal implementation 
 
 #include "include/lock_ios.h"
 #include <system_error>
